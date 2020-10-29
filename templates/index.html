@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maseczka na zdjęciu - analizuj twarz</title>
+    <!-- <link href="/lib/inspinia/css/bootstrap.min.css" rel="stylesheet"> -->
+    <!-- <link href="/lib/inspinia/font-awesome/css/font-awesome.css" rel="stylesheet"> -->
+    <!-- <link href="/lib/inspinia/css/plugins/morris/morris-0.4.3.min.css" rel="stylesheet"> -->
+    <!-- <link href="/lib/inspinia/css/animate.css" rel="stylesheet"> -->
+    <!-- <link href="/lib/inspinia/css/style.css" rel="stylesheet"> -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.7.2/dropzone.min.css">
+    <style>
+        body {
+            margin: 2em;
+        }
+    </style>
+</head>
+
+<body>
+    <form action="/narzedzia/przerabianieplikow.php" class="dropzone needsclick dz-clickable" id="myAwesomeDropzone">
+
+        <div class="dz-message needsclick">
+            <button type="button" class="dz-button">Drop files here or click to upload.</button><br>
+            <span class="note needsclick">(This is just a demo dropzone. Selected files are <strong>not</strong>
+                actually uploaded.)</span>
+        </div>
+
+    </form>
+
+    <div style="height: 30px;"></div>
+
+    <div class="form-group ">
+        <label class="col-md-4 control-label" for="par1">Parametrdozmiany</label>
+        <div class="col-md-6">
+            <input name="par1" type="text" class="form-control input-md  ">
+        </div>
+    </div>
+
+    <div style="height: 30px;"></div>
+
+    <div class="form-group ">
+        <label class="col-md-4 control-label" for="par2">Parametr wyjściowyy</label>
+        <div class="col-md-6">
+            <input name="par2" type="text" class="form-control input-md  ">
+        </div>
+    </div>
+
+    <div style="height: 30px;"></div>
+
+    <div>
+        <button type="button" id="buttonOK1" class="btn btn-info" data-dismiss="modal">Wyślij</button>
+    </div>
+
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.7.2/min/dropzone.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+
+        Dropzone.options.myAwesomeDropzone = {
+            paramName: "file", // The name that will be used to transfer the file
+            maxFilesize: 2, // MB
+            maxFiles: "100",
+            autoProcessQueue: true,
+            // init: function () {
+            //     this.on("sending", function (file, xhr, formData) {
+            //         formData.append("data", "loremipsum");
+            //         console.log(formData)
+            //     });
+            // }
+        };
+
+        $('#buttonOK1').on("click", function () {
+
+            // Dropzone.options.myAwesomeDropzone = {
+            //     url: '/narzedzia/przerabianieplikow.php?dozmiany=' + $('par1').value + '&zmianana=' + $('par1').value
+            // };
+
+            // let url = '/narzedzia/przerabianieplikow.php?dozmiany=' + $('par1').value + '&zmianana=' + $('par1').value;
+            // $('#myAwesomeDropzone').attr('action', url);
+
+            // var myAwesomeDropzone = Dropzone.forElement("#myAwesomeDropzone");
+            myAwesomeDropzone.processQueue();
+
+        });
+    </script>
+
+</body>
+
+</html>
