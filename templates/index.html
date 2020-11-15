@@ -5,88 +5,101 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Maseczka na zdjęciu - analizuj twarz</title>
-    <!-- <link href="/lib/inspinia/css/bootstrap.min.css" rel="stylesheet"> -->
-    <!-- <link href="/lib/inspinia/font-awesome/css/font-awesome.css" rel="stylesheet"> -->
-    <!-- <link href="/lib/inspinia/css/plugins/morris/morris-0.4.3.min.css" rel="stylesheet"> -->
-    <!-- <link href="/lib/inspinia/css/animate.css" rel="stylesheet"> -->
-    <!-- <link href="/lib/inspinia/css/style.css" rel="stylesheet"> -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.7.2/dropzone.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <style>
         body {
             margin: 2em;
+            background: rgb(2, 0, 36);
+            background: linear-gradient(90deg, rgba(2, 0, 36, 1) 0%, rgba(9, 9, 121, 1) 0%, rgba(6, 16, 18, 1) 100%);
+        }
+
+        canvas#viewport {
+            border: 1px solid white;
+            width: 900px;
         }
     </style>
 </head>
 
 <body>
-    <form action="/Detection" class="dropzone needsclick dz-clickable" id="myAwesomeDropzone">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-4">
+                <button type="button" class="btn btn-primary"><span class="badge">1. </span> Dodaj zdjęcie</button>
+                <div style="height: 10px;"></div>
+                <form action="/Detection" class="dropzone needsclick dz-clickable" id="myAwesomeDropzone">
+                    <div class="dz-message needsclick">
+                        <button type="button" class="dz-button">Przeciągnij lub kliknij aby dodać zdjęcie do
+                            analizy.</button><br>
+                        <span class="note needsclick">
+                            <strong></strong></span>
+                    </div>
+                </form>
+            </div>
 
-        <div class="dz-message needsclick">
-            <button type="button" class="dz-button">Drop files here or click to upload.</button><br>
-            <span class="note needsclick">(This is just a demo dropzone. Selected files are <strong>not</strong>
-                actually uploaded.)</span>
-        </div>
-
-    </form>
-
-    <div style="height: 30px;"></div>
-
-    <div class="form-group ">
-        <label class="col-md-4 control-label" for="par1">Parametrdozmiany</label>
-        <div class="col-md-6">
-            <input name="par1" type="text" class="form-control input-md  ">
-        </div>
-    </div>
-
-    <div style="height: 30px;"></div>
-
-    <div class="form-group ">
-        <label class="col-md-4 control-label" for="par2">Parametr wyjściowyy</label>
-        <div class="col-md-6">
-            <input name="par2" type="text" class="form-control input-md  ">
+            <div class="col">
+                <div style="height: 50px;"></div>
+                <button type="button" class="btn btn-primary" id="responseText">2. Wynik</button>
+                <div style="height: 20px;"></div>
+                <canvas id="viewport"></canvas>
+                <div style="height: 30px;"></div>
+                <div style="height: 30px;"></div>
+            </div>
         </div>
     </div>
-
-    <div style="height: 30px;"></div>
-
-    <div>
-        <button type="button" id="buttonOK1" class="btn btn-info" data-dismiss="modal">Wyślij</button>
-    </div>
-
-
-
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.7.2/min/dropzone.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
     <script>
-
         Dropzone.options.myAwesomeDropzone = {
-            paramName: "file", // The name that will be used to transfer the file
+            paramName: "file",
             maxFilesize: 2, // MB
-            maxFiles: "100",
+            maxFiles: "1",
             autoProcessQueue: true,
-            // init: function () {
-            //     this.on("sending", function (file, xhr, formData) {
-            //         formData.append("data", "loremipsum");
-            //         console.log(formData)
-            //     });
-            // }
+            dictCancelUpload: "Błąd przesyłania zdjęcia",
+            dictUploadCanceled: "Błąd przesyłania zdjęcia",
+            dictMaxFilesExceeded: "Można przesłać tylko jedno zdjęcie", 
+            success: function (file, response) {
+                make_base(file, response);
+            }
+
         };
 
-        $('#buttonOK1').on("click", function () {
 
-            // Dropzone.options.myAwesomeDropzone = {
-            //     url: '/narzedzia/przerabianieplikow.php?dozmiany=' + $('par1').value + '&zmianana=' + $('par1').value
-            // };
+        function make_base(file, response) {
+            var canvas = document.getElementById('viewport'),
+                context = canvas.getContext('2d');
+            base_image = new Image();
+            base_image.src = file.dataURL;
+            canvas.width = file.width;
+            canvas.height = file.height;
+            context.clearRect(0, 0, canvas.width, canvas.height);
+            context.drawImage(base_image, 0, 0, canvas.width, canvas.width);
 
-            // let url = '/narzedzia/przerabianieplikow.php?dozmiany=' + $('par1').value + '&zmianana=' + $('par1').value;
-            // $('#myAwesomeDropzone').attr('action', url);
-
-            // var myAwesomeDropzone = Dropzone.forElement("#myAwesomeDropzone");
-            myAwesomeDropzone.processQueue();
-
-        });
+            //draw rectangle
+            if (response.object0.startX)
+                context.beginPath();
+            context.lineWidth = "5";
+            context.strokeStyle = "red";
+            context.rect(response.object0.startX, response.object0.startY, (response.object0.endX - response.object0.startX), (response.object0.endY - response.object0.startY));
+            context.stroke();
+            if (response.object0.Mask) {
+                $('#responseText').text('Wykryto maseczkę z prawdopodobieństwiem: ' + (parseFloat(response.object0.Mask)).toFixed(2) + ' %');
+            }
+            else if (response.object0.NoMask) {
+                $('#responseText').text('Nie wykryto maseczki z prawdopodobieństwiem: ' + (parseFloat(response.object0.NoMask)).toFixed(2) + ' %');
+            }
+        }
     </script>
-
 </body>
 
 </html>

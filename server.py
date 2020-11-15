@@ -115,7 +115,7 @@ def analyze(image):
       
       		# determine the class label and color we'll use to draw
       		# the bounding box and text
-              label = "Mask" if mask > withoutMask else "No Mask"
+              label = "Mask" if mask > withoutMask else "NoMask"
       		
       		# include the probability in the label
               objectLabel={"object{}".format(a):{ "startX":int(startX), "startY": int(startY), "endX":int(endX), "endY":int(endY), label: max(mask, withoutMask) * 100 }}
