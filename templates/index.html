@@ -28,7 +28,7 @@
             <div class="col-lg-4">
                 <button type="button" class="btn btn-primary"><span class="badge">1. </span> Dodaj zdjęcie</button>
                 <div style="height: 10px;"></div>
-                <form action="/Detection" class="dropzone needsclick dz-clickable" id="myAwesomeDropzone">
+                <form action="/" class="dropzone needsclick dz-clickable" id="myAwesomeDropzone">
                     <div class="dz-message needsclick">
                         <button type="button" class="dz-button">Przeciągnij lub kliknij aby dodać zdjęcie do
                             analizy.</button><br>
@@ -64,15 +64,51 @@
             paramName: "file",
             maxFilesize: 2, // MB
             maxFiles: "1",
-            autoProcessQueue: true,
+            autoProcessQueue: false,
             dictCancelUpload: "Błąd przesyłania zdjęcia",
             dictUploadCanceled: "Błąd przesyłania zdjęcia",
-            dictMaxFilesExceeded: "Można przesłać tylko jedno zdjęcie", 
-            success: function (file, response) {
-                make_base(file, response);
+            dictMaxFilesExceeded: "Można przesłać tylko jedno zdjęcie",
+            // success: function (file, response) {
+            //     make_base(file, response);
+            // },
+            accept: function (file, done) {
+                send_file(file);
+
             }
 
         };
+
+        function getBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => {
+                    let encoded = reader.result.toString().replace(/^data:(.*,)?/, '');
+                    if ((encoded.length % 4) > 0) {
+                        encoded += '='.repeat(4 - (encoded.length % 4));
+                    }
+                    resolve(encoded);
+                };
+            });
+        }
+
+        function send_file(file) {
+            var xhr = new XMLHttpRequest();
+            var url = "/Detection";
+            xhr.open("POST", url, true);
+            getBase64(file).then((resolve) => {
+                xhr.setRequestHeader("Content-Type", "application/json");
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState === 4 && xhr.status === 200) {
+                        var json = JSON.parse(xhr.responseText);
+                        make_base(file, json)
+                    }
+                };
+                var data = JSON.stringify({ "file": resolve });
+                xhr.send(data);
+            });
+
+        }
 
 
         function make_base(file, response) {

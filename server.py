@@ -17,6 +17,12 @@ import numpy as np
 import argparse
 import cv2
 import os
+import base64
+import json
+from datetime import datetime
+
+
+
 
 app = Flask(__name__)
 api = Api(app)
@@ -37,19 +43,24 @@ class Detection(Resource):
     
     def post(self):
         
-       
-        if 'file' not in request.files:
-            flash('No file part')
-            return redirect(request.url)
-        file = request.files['file']
+        y = json.loads(request.data)
+        b = bytes(y['file'], 'utf-8')
+        today = datetime.now()
         # if user does not select file, browser also
         # submit an empty part without filename
-        if file.filename == '':
-            flash('No selected file')
-            return redirect(request.url)
-        if file and allowed_file(file.filename):
-            filename = secure_filename(file.filename)
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        dt_string = today.strftime("%d%m%Y%H%M%S")
+        filename = dt_string+'.jpg'
+        filename2 = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        with open(filename2, 'wb') as file_to_save:
+            decoded_image_data = base64.decodebytes(b)
+            file_to_save.write(decoded_image_data)
+        
+        # if file.filename == '':
+        #     flash('No selected file')
+        #     return redirect(request.url)
+        # if file and allowed_file(file.filename):
+            # filename = secure_filename(file.filename)
+        # file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
         
         response=analyze(os.path.join(app.config['UPLOAD_FOLDER'], filename))
         return response
