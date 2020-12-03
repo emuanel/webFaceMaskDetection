@@ -21,9 +21,6 @@ import base64
 import json
 from datetime import datetime
 
-
-
-
 app = Flask(__name__)
 api = Api(app)
 
@@ -64,6 +61,7 @@ class Detection(Resource):
         
         response=analyze(os.path.join(app.config['UPLOAD_FOLDER'], filename))
         return response
+    
 
 api.add_resource(Detection, '/Detection')
 def analyze(image):
